@@ -19,4 +19,29 @@ public class KomponentAntal {
     private Komponent komponent;
 
     private int antal;
+
+    public Bestilling getBestilling() {
+        return bestilling;
+    }
+
+    public void setBestilling(Bestilling bestilling) {
+        this.bestilling = bestilling;
+    }
+
+    public Komponent getKomponent() {
+        return komponent;
+    }
+
+    public void setKomponent(Komponent komponent) {
+        this.komponent = komponent;
+    }
+
+    public int getAntal() {
+        return antal;
+    }
+
+    public void setAntal(int antal) {
+        this.antal = antal;
+    }
 }
+

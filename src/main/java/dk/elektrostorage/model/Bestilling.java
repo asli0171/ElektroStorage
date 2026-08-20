@@ -24,8 +24,25 @@ public class Bestilling {
 
     @OneToMany
     private List<KomponentAntal> komponenter = new ArrayList<>();
+    private boolean sendt;
 
     public int getNumberofKomponenter() {
         return komponenter.size();
-}
+    }
+
+    public List<KomponentAntal> getKomponenter() {
+        return komponenter;
+    }
+
+    public boolean isSendt() {
+        return sendt;
+    }
+
+    public void setSendt(boolean sendt) {
+        this.sendt = sendt;
+    }
+
+    public LocalDate getModtagetDato() {
+        return modtagetDato;
+    }
 }

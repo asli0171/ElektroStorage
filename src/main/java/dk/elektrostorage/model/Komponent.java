@@ -21,4 +21,21 @@ public class Komponent {
 
     private boolean udgaaet;
 
+
+    public int getKomponentId() {
+        return komponentId;
+    }
+
+    public String getEksterntVarenummer() {
+        return eksterntVarenummer;
+    }
+
+    public boolean isUdgaaet() {
+        return udgaaet;
+    }
+
+    public void setUdgaaet(boolean udgaaet) {
+        this.udgaaet = udgaaet;
+    }
+
 }
