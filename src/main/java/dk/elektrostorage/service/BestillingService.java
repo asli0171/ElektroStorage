@@ -21,6 +21,10 @@ public class BestillingService {
         return bestillingRepository.findAll();
     }
 
+    public Bestilling addBestilling(Bestilling bestilling) {
+        return bestillingRepository.save(bestilling);
+    }
+
     public Bestilling addKomponentAntal(KomponentAntal komponentAntal) {
         Bestilling bestilling = komponentAntal.getBestilling();
 

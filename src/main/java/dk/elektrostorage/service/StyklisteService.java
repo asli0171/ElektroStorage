@@ -18,5 +18,7 @@ public class StyklisteService {
     public List<Stykliste> getAllStyklister() {
         return styklisteRepository.findAll();
     }
+
+
 }
 
