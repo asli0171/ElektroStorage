@@ -31,12 +31,12 @@ public class KomponentControllerTest {
     public void test_Post_Komponent() throws Exception {
 
         String json = """
-            {
-                "komponentId": 1,
-                "eksterntVarenummer": "ABC123",
-                "udgaaet": false
-            }
-            """;
+                {
+                    "komponentId": 1,
+                    "eksterntVarenummer": "ABC123",
+                    "udgaaet": false
+                }
+                """;
 
         mockMvc.perform(post("/komponenter")
                         .contentType("application/json")
@@ -47,7 +47,20 @@ public class KomponentControllerTest {
     @Test
     public void test_Put_Komponent_Udgaaet() throws Exception {
 
+        String json = """
+                {
+                    "komponentId": 1,
+                    "eksterntVarenummer": "145",
+                    "udgaaet": false
+                }
+                """;
+
+        mockMvc.perform(post("/komponenter")
+                        .contentType("application/json")
+                        .content(json))
+                .andExpect(status().isOk());
+
         mockMvc.perform(put("/komponenter/1/udgaaet"))
-                .andExpect(status().is(200));
+                .andExpect(status().isOk());
     }
 }
