@@ -22,6 +22,12 @@ public class BestillingController {
         return bestillingService.getAllBestillinger();
     }
 
+    @GetMapping("/{id}")
+    public Bestilling getBestilling(@PathVariable int id) {
+        return bestillingService.getBestilling(id);
+    }
+
+
     @PostMapping
     public Bestilling addBestilling(@RequestBody Bestilling bestilling) {
         return bestillingService.addBestilling(bestilling);

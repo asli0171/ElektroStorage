@@ -47,5 +47,10 @@ public class BestillingService {
         bestillingRepository.save(bestilling);
     }
 
+    public Bestilling getBestilling(int id) {
+        return bestillingRepository.findById(id)
+                .orElseThrow();
+    }
+
 
 }

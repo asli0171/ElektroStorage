@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+   <meta charset="utf-8">
+   <title>ElektroStorage</title>
+</head>
+
+<body>
+   <h1>ElektroStorage - Bestilling #<span id="orderId"></span></h1>
+   <hr>
+
+   <h3>Komponenter i bestillingen</h3>
+
+   <ul id="componentList">
+   </ul>
+
+   <div id="addComponent">
+      <h3>Tilføj komponent</h3>
+
+      <form id="componentForm">
+         <label for="komponent">Komponent ID:</label>
+         <input type="number" id="komponent">
+
+         <label for="antal">Antal:</label>
+         <input type="number" id="antal">
+
+         <button type="submit">Tilføj</button>
+      </form>
+
+   </div>
+
+   <script>
+      const orderId = new URLSearchParams(window.location.search).get("id");
+
+
+      fetch("/bestillinger/" + orderId)
+         .then(response => response.json())
+         .then(order => {
+
+            order.komponenter.forEach(komponent => {
+               const li = document.createElement("li");
+
+               li.textContent = komponent.komponent.name;
+
+               document.getElementById("componentList").appendChild(li);
+            });
+
+
+            document.getElementById("orderId").textContent = order.id;
+
+            if (order.sent) {
+               document.getElementById("addComponent").style.display = "none";
+            }
+         });
+
+      document.getElementById("componentForm").onsubmit = function(event) {
+         event.preventDefault();
+
+         const komponentId = document.getElementById("komponent").value;
+         const antal = document.getElementById("antal").value;
+
+         fetch("/bestillinger/komponenter", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+               bestilling: { id: orderId },
+               komponent: { id: komponentId },
+               antal: antal
+            })
+         });
+      };
+
+   </script>
+
+</body>
+</html>

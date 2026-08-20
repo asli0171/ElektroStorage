@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+   <meta charset="utf-8">
+   <title>ElektroStorage</title>
+</head>
+
+<body>
+   <h1>ElektroStorage - Komponenter</h1>
+   <hr>
+
+   <h3>Liste over komponenter</h3>
+
+   <ul id="componentList">
+   </ul>
+
+   <h3>Tilføj komponent</h3>
+
+   <form id="componentForm">
+      <label for="komponent">Komponent:</label>
+      <input type="text" id="komponent" name="komponent">
+
+      <button type="submit">Tilføj</button>
+   </form>
+
+   <script>
+      fetch("/komponenter")
+         .then(response => response.json())
+         .then(components => {
+
+            const componentList =
+               document.getElementById("componentList");
+
+            components.forEach(component => {
+
+               const li = document.createElement("li");
+
+               li.textContent = component.name + " ";
+
+               const button = document.createElement("button");
+
+               button.textContent = "Udgået";
+
+               button.onclick = function () {
+                  if (confirm("Er du sikker på, at komponenten skal markeres som udgået?")) {
+
+                     fetch("/komponenter/" + component.id + "/udgaaet", {
+                        method: "PUT"
+                     });
+                  }
+               };
+
+               li.appendChild(button);
+               componentList.appendChild(li);
+            });
+         });
+      document.getElementById("componentForm").onsubmit = function(event) {
+         event.preventDefault();
+
+         const name = document.getElementById("komponent").value;
+
+         fetch("/komponenter", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name: name })
+         });
+      };
+
+   </script>
+
+</body>
+</html>

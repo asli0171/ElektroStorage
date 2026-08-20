@@ -4,7 +4,7 @@ package dk.elektrostorage.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "lager")
+@Table(name = "lager.html")
 
 public class Lager {
 

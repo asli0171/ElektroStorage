@@ -23,7 +23,7 @@ public class LagerControllerTest {
     @Test
     public void test_Get_Komponenter() throws Exception {
 
-        mockMvc.perform(get("/lager"))
+        mockMvc.perform(get("/lager.html"))
                 .andExpect(status().is(200));
     }
 
@@ -41,7 +41,7 @@ public class LagerControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/lager")
+        mockMvc.perform(post("/lager.html")
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().is(200));

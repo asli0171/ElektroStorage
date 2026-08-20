@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+   <meta charset="utf-8">
+   <title>ElektroStorage</title>
+</head>
+
+<body>
+   <h1>ElektroStorage - Inventar</h1>
+   <hr>
+
+   <h3>Komponenter på lager</h3>
+
+   <ul id="inventoryList">
+   </ul>
+
+   <script>
+      fetch("/lager")
+         .then(response => response.json())
+         .then(components => {
+
+            const inventoryList =
+               document.getElementById("inventoryList");
+
+            components.forEach(component => {
+
+               const li = document.createElement("li");
+
+               li.textContent = component.name;
+
+               inventoryList.appendChild(li);
+            });
+         });
+   </script>
+
+</body>
+</html>

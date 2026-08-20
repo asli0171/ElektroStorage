@@ -23,7 +23,7 @@ public class KomponentControllerTest {
     @Test
     public void test_Get_Komponenter() throws Exception {
 
-        mockMvc.perform(get("/komponenter"))
+        mockMvc.perform(get("/komponenter.html"))
                 .andExpect(status().is(200));
     }
 
@@ -38,7 +38,7 @@ public class KomponentControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/komponenter")
+        mockMvc.perform(post("/komponenter.html")
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().is(200));
@@ -55,12 +55,12 @@ public class KomponentControllerTest {
                 }
                 """;
 
-        mockMvc.perform(post("/komponenter")
+        mockMvc.perform(post("/komponenter.html")
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(put("/komponenter/1/udgaaet"))
+        mockMvc.perform(put("/komponenter.html/1/udgaaet"))
                 .andExpect(status().isOk());
     }
 }

@@ -25,7 +25,7 @@ public class BestillingControllerTest {
     @Test
     public void test_Get_Bestillinger() throws Exception {
 
-        mockMvc.perform(get("/bestillinger"))
+        mockMvc.perform(get("/bestilling.html"))
                 .andExpect(status().is(200));
     }
 
@@ -38,7 +38,7 @@ public class BestillingControllerTest {
             }
             """;
 
-        mockMvc.perform(post("/bestillinger")
+        mockMvc.perform(post("/bestilling.html")
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().is(200));
@@ -52,7 +52,7 @@ public class BestillingControllerTest {
         }
         """;
 
-        mockMvc.perform(post("/bestillinger")
+        mockMvc.perform(post("/bestilling.html")
                         .contentType("application/json")
                         .content(bestillingJson))
                 .andExpect(status().isOk());
@@ -66,7 +66,7 @@ public class BestillingControllerTest {
         }
         """;
 
-        mockMvc.perform(post("/komponenter")
+        mockMvc.perform(post("/komponenter.html")
                         .contentType("application/json")
                         .content(komponentJson))
                 .andExpect(status().isOk());
@@ -87,7 +87,7 @@ public class BestillingControllerTest {
         }
         """;
 
-        mockMvc.perform(post("/bestillinger/komponenter")
+        mockMvc.perform(post("/bestilling.html/komponenter.html")
                         .contentType("application/json")
                         .content(json))
                 .andExpect(status().isOk());
@@ -107,7 +107,7 @@ public class BestillingControllerTest {
 
         bestilling = bestillingRepository.save(bestilling);
 
-        mockMvc.perform(put("/bestillinger/" + bestilling.getId() + "/sendt"))
+        mockMvc.perform(put("/bestilling.html/" + bestilling.getId() + "/sendt"))
                 .andExpect(status().isOk());
     }
 
