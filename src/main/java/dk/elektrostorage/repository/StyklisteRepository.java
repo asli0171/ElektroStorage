@@ -1,4 +1,7 @@
 package dk.elektrostorage.repository;
 
-public class StyklisteRepository {
+import dk.elektrostorage.model.Stykliste;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface StyklisteRepository extends JpaRepository<Stykliste, Integer> {
 }

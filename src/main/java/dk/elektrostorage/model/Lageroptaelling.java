@@ -4,9 +4,9 @@ package dk.elektrostorage.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "lageroptælling")
+@Table(name = "lageroptaelling")
 
-public class Lageroptælling {
+public class Lageroptaelling {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

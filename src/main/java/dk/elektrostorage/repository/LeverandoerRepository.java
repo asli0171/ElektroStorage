@@ -1,4 +1,8 @@
 package dk.elektrostorage.repository;
 
-public class LeverandoerRepository {
+import dk.elektrostorage.model.Leverandoer;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface LeverandoerRepository extends JpaRepository<Leverandoer, Integer> {
+
 }
