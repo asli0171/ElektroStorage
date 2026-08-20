@@ -5,22 +5,22 @@ bestillinger, lager og styklister.
 
 ## Funktioner
 
-### Components
+### Komponenter
 - Liste komponenter
 - Tilføje komponenter
 - Markere komponenter som udgået
 
-### Orders
+### Bestillinger
 - Liste bestillinger
 - Tilføje komponenter og antal til bestillinger
 - Markere bestillinger som sendt
 - Forhindre ændringer efter en bestilling er sendt
 
-### Inventory
+### Lager
 - Liste komponenter, som er modtaget via bestillinger
 - Indsende lageroptælling af en bestemt komponent
 
-### Assemblies
+### Styklister
 - Se styklister
 - Se komponenter i styklister
 - Se antal af hver komponent
@@ -65,7 +65,7 @@ bestillinger, lager og styklister.
 
 ## REST API
 
-- `/components`
-- `/orders`
-- `/inventory`
-- `/assemblies`
+- `/komponenter`
+- `/bestillinger`
+- `/lager`
+- `/styklister`
