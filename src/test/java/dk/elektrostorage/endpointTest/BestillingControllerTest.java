@@ -1,5 +1,7 @@
 package dk.elektrostorage.endpointTest;
 
+import dk.elektrostorage.model.Bestilling;
+import dk.elektrostorage.repository.BestillingRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,26 +43,73 @@ public class BestillingControllerTest {
                         .content(json))
                 .andExpect(status().is(200));
     }
-
     @Test
     public void test_Post_KomponentAntal() throws Exception {
 
+        String bestillingJson = """
+        {
+            "bestillingsId": 1
+        }
+        """;
+
+        mockMvc.perform(post("/bestillinger")
+                        .contentType("application/json")
+                        .content(bestillingJson))
+                .andExpect(status().isOk());
+
+
+        String komponentJson = """
+        {
+            "komponentId": 1,
+            "eksterntVarenummer": "ABC123",
+            "udgaaet": false
+        }
+        """;
+
+        mockMvc.perform(post("/komponenter")
+                        .contentType("application/json")
+                        .content(komponentJson))
+                .andExpect(status().isOk());
+
+
         String json = """
-            {
-                "antal": 5
+        {
+            "antal": 5,
+            "bestilling": {
+                "bestillingsId": 1,
+                "sendt": false
+            },
+            "komponent": {
+                "komponentId": 1,
+                "eksterntVarenummer": "ABC123",
+                "udgaaet": false
             }
-            """;
+        }
+        """;
 
         mockMvc.perform(post("/bestillinger/komponenter")
                         .contentType("application/json")
                         .content(json))
-                .andExpect(status().is(200));
+                .andExpect(status().isOk());
     }
+
+
+    @Autowired
+    private BestillingRepository bestillingRepository;
+
 
     @Test
     public void test_Put_Bestilling_Sendt() throws Exception {
 
-        mockMvc.perform(put("/bestillinger/1/sendt"))
-                .andExpect(status().is(200));
+        Bestilling bestilling = new Bestilling();
+        bestilling.setBestillingsId(1);
+        bestilling.setSendt(false);
+
+        bestilling = bestillingRepository.save(bestilling);
+
+        mockMvc.perform(put("/bestillinger/" + bestilling.getId() + "/sendt"))
+                .andExpect(status().isOk());
     }
+
+
 }

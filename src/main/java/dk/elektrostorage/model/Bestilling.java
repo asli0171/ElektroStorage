@@ -22,7 +22,7 @@ public class Bestilling {
     private LocalDate forventetDato;
     private LocalDate modtagetDato;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<KomponentAntal> komponenter = new ArrayList<>();
     private boolean sendt;
 
@@ -44,5 +44,13 @@ public class Bestilling {
 
     public LocalDate getModtagetDato() {
         return modtagetDato;
+    }
+
+    public int getId() {
+        return bestillingsId;
+    }
+
+    public void setBestillingsId(int bestillingsId) {
+        this.bestillingsId = bestillingsId;
     }
 }
