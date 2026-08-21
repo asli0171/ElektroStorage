@@ -90,6 +90,7 @@ bestillinger, lager og styklister.
 
 
 ## Test
-REST API'et er testet med JUnit og manuelt med en API-klient.
 
-Alle endpoints er blevet afprøvet.
+REST API'et er testet med JUnit/MockMvc og manuelt med en API-klient.
+
+Alle endpoints er blevet afprøvet, og de automatiserede tests består.
