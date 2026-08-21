@@ -65,7 +65,18 @@ public class BestillingService {
 
         Komponent komponent = komponentRepository
                 .findById(komponentId)
-                .orElseThrow();
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Komponenten findes ikke"
+                        )
+                );
+
+        if (komponent.isUdgaaet()) {
+            throw new IllegalStateException(
+                    "Komponenten er udgået og kan ikke bestilles"
+            );
+        }
+
 
         KomponentAntal komponentAntal = new KomponentAntal();
 

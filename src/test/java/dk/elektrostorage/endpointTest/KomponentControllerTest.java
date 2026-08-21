@@ -7,6 +7,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -23,44 +24,35 @@ public class KomponentControllerTest {
     @Test
     public void test_Get_Komponenter() throws Exception {
 
-        mockMvc.perform(get("/komponenter.html"))
-                .andExpect(status().is(200));
+        mockMvc.perform(get("/komponenter"))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void test_Post_Komponent() throws Exception {
 
         String json = """
-                {
-                    "komponentId": 1,
-                    "eksterntVarenummer": "ABC123",
-                    "udgaaet": false
+            {
+                "id": 999,
+                "navn": "Test komponent",
+                "eksterntVarenr": "ABC123",
+                "udgaaet": false,
+                "leverandoer": {
+                    "navn": "Eldele Aps"
                 }
-                """;
+            }
+            """;
 
-        mockMvc.perform(post("/komponenter.html")
-                        .contentType("application/json")
+        mockMvc.perform(post("/komponenter")
+                        .contentType(APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().is(200));
+                .andExpect(status().isOk());
     }
 
     @Test
     public void test_Put_Komponent_Udgaaet() throws Exception {
 
-        String json = """
-                {
-                    "komponentId": 1,
-                    "eksterntVarenummer": "145",
-                    "udgaaet": false
-                }
-                """;
-
-        mockMvc.perform(post("/komponenter.html")
-                        .contentType("application/json")
-                        .content(json))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(put("/komponenter.html/1/udgaaet"))
+        mockMvc.perform(put("/komponenter/101/udgaaet"))
                 .andExpect(status().isOk());
     }
 }
