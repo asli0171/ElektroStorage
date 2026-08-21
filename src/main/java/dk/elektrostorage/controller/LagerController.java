@@ -1,6 +1,5 @@
 package dk.elektrostorage.controller;
 
-import dk.elektrostorage.model.Komponent;
 import dk.elektrostorage.model.Lager;
 import dk.elektrostorage.service.LagerService;
 import org.springframework.web.bind.annotation.*;

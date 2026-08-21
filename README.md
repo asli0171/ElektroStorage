@@ -65,7 +65,31 @@ bestillinger, lager og styklister.
 
 ## REST API
 
-- `/komponenter`
-- `/bestillinger`
-- `/lager`
-- `/styklister`
+
+### Komponenter
+- `GET /komponenter`
+- `POST /komponenter`
+- `PUT /komponenter/{id}/udgaaet`
+
+### Bestillinger
+- `GET /bestillinger`
+- `GET /bestillinger/{id}`
+- `POST /bestillinger`
+- `POST /bestillinger/komponenter`
+- `PUT /bestillinger/{id}/sendt`
+
+### Lager
+- `GET /lager`
+- `POST /lager`
+
+### Styklister
+- `GET /styklister`
+
+### Leverandører
+- `GET /leverandoerer`
+
+
+## Test
+REST API'et er testet med JUnit og manuelt med en API-klient.
+
+Alle endpoints er blevet afprøvet.
