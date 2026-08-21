@@ -45,6 +45,7 @@ CREATE TABLE Lager (
                        id INT PRIMARY KEY AUTO_INCREMENT,
                        komponent_id INT NOT NULL,
                        antal INT NOT NULL,
+                       optalt_af VARCHAR(100),
 
                        FOREIGN KEY (komponent_id)
                            REFERENCES Komponent(id)

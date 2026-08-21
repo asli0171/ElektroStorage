@@ -19,8 +19,8 @@ public class LagerController {
     }
 
     @GetMapping
-    public List<Komponent> getAllKomponenter() {
-        return lagerService.getAllKomponenter();
+    public List<Lager> getAllLager() {
+        return lagerService.getAllLager();
     }
 
     @PostMapping

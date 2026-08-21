@@ -1,6 +1,7 @@
 package dk.elektrostorage.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +14,7 @@ public class KomponentAntal {
     private int id;
 
     @ManyToOne
+    @JsonIgnore
     private Bestilling bestilling;
 
     @ManyToOne

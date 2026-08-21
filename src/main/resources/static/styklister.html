@@ -2,34 +2,100 @@
 <html lang="da">
 <head>
    <meta charset="utf-8">
-   <title>ElektroStorage</title>
+   <title>ElektroStorage - Styklister</title>
+
+   <style>
+      table {
+         border-collapse: collapse;
+         width: 80%;
+      }
+
+      th, td {
+         border: 1px solid black;
+         padding: 8px;
+         text-align: left;
+      }
+
+      th {
+         background-color: #f2f2f2;
+      }
+   </style>
 </head>
 
 <body>
-   <h1>ElektroStorage - Styklister</h1>
-   <hr>
 
-   <h3>Liste over styklister</h3>
+<h1>ElektroStorage - Styklister</h1>
 
-   <ul id="billList"></ul>
+<hr>
 
-   <script>
-      fetch("/styklister")
-         .then(response => response.json())
-         .then(bills => {
+<h3>Liste over styklister</h3>
 
-            const billList = document.getElementById("billList");
+<table>
+   <thead>
+   <tr>
+      <th>Komponent ID</th>
+      <th>Komponent der bygges</th>
+      <th>Indgående komponent</th>
+      <th>Antal</th>
+   </tr>
+   </thead>
 
-            bills.forEach(bill => {
+   <tbody id="billList">
+   </tbody>
+</table>
 
-               const li = document.createElement("li");
 
-               li.textContent = bill.name;
+<script>
 
-               billList.appendChild(li);
-            });
-         });
-   </script>
+   fetch("/styklister")
+           .then(response => {
+
+              if (!response.ok) {
+                 throw new Error("Kunne ikke hente styklister");
+              }
+
+              return response.json();
+
+           })
+           .then(bills => {
+
+              const billList =
+                      document.getElementById("billList");
+
+              bills.forEach(bill => {
+
+                 bill.komponenter.forEach(komponent => {
+
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                        <td>${bill.resultat.id}</td>
+                        <td>${bill.resultat.navn}</td>
+                        <td>${komponent.komponent.navn}</td>
+                        <td>${komponent.antal}</td>
+                    `;
+
+                    billList.appendChild(row);
+                 });
+
+              });
+
+           })
+           .catch(error => {
+
+              console.error(error);
+
+              document.getElementById("billList").innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        Kunne ikke hente styklister.
+                    </td>
+                </tr>
+            `;
+
+           });
+
+</script>
 
 </body>
 </html>

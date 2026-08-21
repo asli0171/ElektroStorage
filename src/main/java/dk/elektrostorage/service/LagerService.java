@@ -24,6 +24,10 @@ public class LagerService {
         this.bestillingRepository = bestillingRepository;
     }
 
+    public List<Lager> getAllLager() {
+        return lagerRepository.findAll();
+    }
+
     public List<Komponent> getAllKomponenter() {
 
         List<Bestilling> bestillinger = bestillingRepository.findAll();
@@ -42,9 +46,18 @@ public class LagerService {
 
         return komponenter;
     }
-
     public Lager registrerOptaelling(Lager lager) {
-        return lagerRepository.save(lager);
+
+        Lager eksisterendeLager = lagerRepository
+                .findByKomponentId(lager.getKomponent().getId())
+                .orElseThrow(() ->
+                        new RuntimeException("Komponenten findes ikke på lager")
+                );
+
+        eksisterendeLager.setAntal(lager.getAntal());
+        eksisterendeLager.setOptaltAf(lager.getOptaltAf());
+
+        return lagerRepository.save(eksisterendeLager);
     }
 
 }

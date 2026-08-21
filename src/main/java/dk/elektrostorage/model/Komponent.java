@@ -1,10 +1,7 @@
 package dk.elektrostorage.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "komponent")
@@ -12,22 +9,42 @@ import jakarta.persistence.Table;
 public class Komponent {
 
     @Id
-    private int komponentId;
+    @Column(name = "id")
+    private int id;
 
-    @ManyToOne
-    private Leverandoer leverandoer;
+    private String navn;
 
-    private String eksterntVarenummer;
+    @Column(name = "eksternt_varenr")
+    private String eksterntVarenr;
 
     private boolean udgaaet;
 
+    @ManyToOne
+    @JoinColumn(name = "leverandoer_id")
+    private Leverandoer leverandoer;
 
-    public int getKomponentId() {
-        return komponentId;
+    public int getId() {
+        return id;
     }
 
-    public String getEksterntVarenummer() {
-        return eksterntVarenummer;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNavn() {
+        return navn;
+    }
+
+    public void setNavn(String navn) {
+        this.navn = navn;
+    }
+
+    public String getEksterntVarenr() {
+        return eksterntVarenr;
+    }
+
+    public void setEksterntVarenr(String eksterntVarenr) {
+        this.eksterntVarenr = eksterntVarenr;
     }
 
     public boolean isUdgaaet() {
@@ -36,6 +53,14 @@ public class Komponent {
 
     public void setUdgaaet(boolean udgaaet) {
         this.udgaaet = udgaaet;
+    }
+
+    public Leverandoer getLeverandoer() {
+        return leverandoer;
+    }
+
+    public void setLeverandoer(Leverandoer leverandoer) {
+        this.leverandoer = leverandoer;
     }
 
 }

@@ -2,39 +2,264 @@
 <html lang="da">
 <head>
     <meta charset="utf-8">
-    <title>ElektroStorage</title>
+    <title>ElektroStorage - Bestillinger</title>
+
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 90%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>ElektroStorage - Bestillinger</h1>
-    <hr>
 
-    <h3>Liste over bestillinger</h3>
+<h1>ElektroStorage - Bestillinger</h1>
 
-    <ul id="orderList"></ul>
+<hr>
 
-    <script>
-        fetch("/bestillinger")
-            .then(response => response.json())
-            .then(orders => {
-                const orderList = document.getElementById("orderList");
+<h3>Opret ny bestilling</h3>
 
-                orders
-                    .filter(order => !order.modtagetDato)
-                    .forEach(order => {
-                        const li = document.createElement("li");
+<form id="orderForm">
 
-                        li.innerHTML = `
-                        <a href="/ordrer.html?id=${order.id}">
-                            Bestilling #${order.id}
-                        </a>
+    <label for="leverandoer">
+        Leverandør:
+    </label>
+
+    <select id="leverandoer" required>
+        <option value="">Vælg leverandør</option>
+    </select>
+
+    <br><br>
+
+    <button type="submit">
+        Opret bestilling
+    </button>
+
+</form>
+
+
+<hr>
+
+<h3>Bestillinger der ikke er modtaget</h3>
+
+<table>
+
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Leverandør</th>
+        <th>Status</th>
+        <th>Tracking-kode</th>
+        <th>Forventet levering</th>
+        <th>Handling</th>
+    </tr>
+    </thead>
+
+    <tbody id="orderList">
+    </tbody>
+
+</table>
+
+
+<script>
+
+    fetch("/leverandoerer")
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error(
+                    "Kunne ikke hente leverandører"
+                );
+            }
+
+            return response.json();
+
+        })
+        .then(leverandoerer => {
+
+            const select =
+                document.getElementById("leverandoer");
+
+            leverandoerer.forEach(leverandoer => {
+
+                const option =
+                    document.createElement("option");
+
+                option.value = leverandoer.id;
+
+                option.textContent =
+                    leverandoer.navn;
+
+                select.appendChild(option);
+
+            });
+
+        })
+        .catch(error => {
+
+            console.error(error);
+
+            alert(
+                "Kunne ikke hente leverandører."
+            );
+
+        });
+
+    document.getElementById("orderForm").onsubmit =
+        function(event) {
+
+            event.preventDefault();
+
+            const leverandoerId =
+                document.getElementById("leverandoer").value;
+
+
+            fetch("/bestillinger", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    leverandoer: {
+                        id: Number(leverandoerId)
+                    },
+
+                    komponenter: []
+
+                })
+
+            })
+                .then(response => {
+
+                    if (!response.ok) {
+
+                        return response.text()
+                            .then(text => {
+                                throw new Error(text);
+                            });
+
+                    }
+
+                    return response.json();
+
+                })
+                .then(order => {
+
+                    window.location.href =
+                        "/ordrer.html?id=" + order.id;
+
+                })
+                .catch(error => {
+
+                    console.error(error);
+
+                    alert(
+                        "Der skete en fejl ved oprettelse:\n" +
+                        error.message
+                    );
+
+                });
+
+        };
+
+    fetch("/bestillinger")
+        .then(response => {
+
+            if (!response.ok) {
+                throw new Error(
+                    "Kunne ikke hente bestillinger"
+                );
+            }
+
+            return response.json();
+
+        })
+        .then(orders => {
+
+            const orderList =
+                document.getElementById("orderList");
+
+            orders
+                .filter(order => !order.modtagetDato)
+
+                .forEach(order => {
+
+                    const row =
+                        document.createElement("tr");
+
+                    let status;
+
+                    if (order.sendtDato) {
+                        status = "Sendt";
+                    } else {
+                        status = "Ikke sendt";
+                    }
+
+                    row.innerHTML = `
+                        <td>
+                            ${order.id}
+                        </td>
+
+                        <td>
+                            ${order.leverandoer
+                        ? order.leverandoer.navn
+                        : "-"}
+                        </td>
+
+                        <td>
+                            ${status}
+                        </td>
+
+                        <td>
+                            ${order.trackingKode || "-"}
+                        </td>
+
+                        <td>
+                            ${order.forventetDato || "-"}
+                        </td>
+
+                        <td>
+                            <a href="/ordrer.html?id=${order.id}">
+                                Se bestilling
+                            </a>
+                        </td>
                     `;
 
-                        orderList.appendChild(li);
-                    });
-            });
-    </script>
+                    orderList.appendChild(row);
 
+                });
+
+        })
+        .catch(error => {
+
+            console.error(error);
+
+            document.getElementById("orderList").innerHTML = `
+                <tr>
+                    <td colspan="6">
+                        Kunne ikke hente bestillinger.
+                    </td>
+                </tr>
+            `;
+
+        });
+
+</script>
 
 </body>
 </html>

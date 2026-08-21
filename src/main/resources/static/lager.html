@@ -2,36 +2,168 @@
 <html lang="da">
 <head>
    <meta charset="utf-8">
-   <title>ElektroStorage</title>
+   <title>ElektroStorage - Inventar</title>
+
+   <style>
+      table {
+         border-collapse: collapse;
+         width: 80%;
+      }
+
+      th, td {
+         border: 1px solid black;
+         padding: 8px;
+         text-align: left;
+      }
+
+      th {
+         background-color: #f2f2f2;
+      }
+   </style>
 </head>
 
 <body>
-   <h1>ElektroStorage - Inventar</h1>
-   <hr>
 
-   <h3>Komponenter på lager</h3>
+<h1>ElektroStorage - Inventar</h1>
+<hr>
 
-   <ul id="inventoryList">
-   </ul>
+<h3>Komponenter på lager</h3>
 
-   <script>
-      fetch("/lager")
-         .then(response => response.json())
-         .then(components => {
+<table>
+   <thead>
+   <tr>
+      <th>Komponent ID</th>
+      <th>Komponent</th>
+      <th>Antal</th>
+      <th>Optalt af</th>
+   </tr>
+   </thead>
 
-            const inventoryList =
-               document.getElementById("inventoryList");
+   <tbody id="inventoryList">
+   </tbody>
+</table>
 
-            components.forEach(component => {
 
-               const li = document.createElement("li");
+<h3>Registrer optælling</h3>
 
-               li.textContent = component.name;
+<form id="inventoryForm">
 
-               inventoryList.appendChild(li);
-            });
-         });
-   </script>
+   <label for="komponentId">Komponent ID:</label>
+   <input type="text" id="komponentId" required>
+
+   <br><br>
+
+   <label for="antal">Antal:</label>
+   <input type="number" id="antal" min="0" required>
+
+   <br><br>
+
+   <label for="optaltAf">Optalt af:</label>
+   <input type="text" id="optaltAf" required>
+
+   <br><br>
+
+   <button type="submit">Gem optælling</button>
+
+</form>
+
+
+<script>
+
+   fetch("/lager")
+           .then(response => response.json())
+           .then(lager => {
+
+              const inventoryList =
+                      document.getElementById("inventoryList");
+
+              lager.forEach(lagerItem => {
+
+                 const row = document.createElement("tr");
+
+                 row.innerHTML = `
+                    <td>${lagerItem.komponent.id}</td>
+                    <td>${lagerItem.komponent.navn}</td>
+                    <td>${lagerItem.antal}</td>
+                    <td>${lagerItem.optaltAf}</td>
+                `;
+
+                 inventoryList.appendChild(row);
+              });
+
+           });
+
+
+   document.getElementById("inventoryForm").onsubmit =
+           function(event) {
+
+              event.preventDefault();
+
+              const komponentId =
+                      document.getElementById("komponentId").value;
+
+              const antal =
+                      document.getElementById("antal").value;
+
+              const optaltAf =
+                      document.getElementById("optaltAf").value;
+
+
+              fetch("/lager", {
+
+                 method: "POST",
+
+                 headers: {
+                    "Content-Type": "application/json"
+                 },
+
+                 body: JSON.stringify({
+
+                    komponent: {
+                       id: Number(komponentId)
+                    },
+
+                    antal: Number(antal),
+
+                    optaltAf: optaltAf
+
+                 })
+
+              })
+                      .then(response => {
+
+                         if (!response.ok) {
+
+                            return response.text()
+                                    .then(text => {
+                                       throw new Error(text);
+                                    });
+                         }
+
+                         return response.json();
+
+                      })
+
+                      .then(() => {
+
+                         location.reload();
+
+                      })
+
+                      .catch(error => {
+
+                         console.error(error);
+
+                         alert(
+                                 "Der skete en fejl ved registrering af optællingen:\n" +
+                                 error.message
+                         );
+
+                      });
+
+           };
+
+</script>
 
 </body>
 </html>

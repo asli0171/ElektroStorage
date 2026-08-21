@@ -2,73 +2,228 @@
 <html lang="da">
 <head>
    <meta charset="utf-8">
-   <title>ElektroStorage</title>
+   <title>ElektroStorage - Komponenter</title>
+
+   <style>
+      table {
+         border-collapse: collapse;
+         width: 80%;
+      }
+
+      th, td {
+         border: 1px solid black;
+         padding: 8px;
+         text-align: left;
+      }
+
+      th {
+         background-color: #f2f2f2;
+      }
+   </style>
 </head>
 
 <body>
-   <h1>ElektroStorage - Komponenter</h1>
-   <hr>
 
-   <h3>Liste over komponenter</h3>
+<h1>ElektroStorage - Komponenter</h1>
+<hr>
 
-   <ul id="componentList">
-   </ul>
+<h3>Liste over komponenter</h3>
 
-   <h3>Tilføj komponent</h3>
+<table>
+   <thead>
+   <tr>
+      <th>ID</th>
+      <th>Navn</th>
+      <th>Varenummer</th>
+      <th>Leverandør</th>
+      <th>Status</th>
+      <th>Handling</th>
+   </tr>
+   </thead>
 
-   <form id="componentForm">
-      <label for="komponent">Komponent:</label>
-      <input type="text" id="komponent" name="komponent">
+   <tbody id="componentList">
+   </tbody>
+</table>
 
-      <button type="submit">Tilføj</button>
-   </form>
+<h3>Tilføj komponent</h3>
 
-   <script>
-      fetch("/komponenter")
-         .then(response => response.json())
-         .then(components => {
+<form id="componentForm">
 
-            const componentList =
-               document.getElementById("componentList");
+   <label for="id">ID:</label>
+   <input type="text" id="id" required>
 
-            components.forEach(component => {
+   <br><br>
 
-               const li = document.createElement("li");
+   <label for="navn">Navn:</label>
+   <input type="text" id="navn" required>
 
-               li.textContent = component.name + " ";
+   <br><br>
 
-               const button = document.createElement("button");
+   <label for="varenr">Varenummer:</label>
+   <input type="text" id="varenr" required>
 
-               button.textContent = "Udgået";
+   <br><br>
 
-               button.onclick = function () {
-                  if (confirm("Er du sikker på, at komponenten skal markeres som udgået?")) {
+   <label for="leverandoer">Leverandør:</label>
+   <input type="text" id="leverandoer" required>
 
-                     fetch("/komponenter/" + component.id + "/udgaaet", {
-                        method: "PUT"
-                     });
-                  }
-               };
+   <br><br>
 
-               li.appendChild(button);
-               componentList.appendChild(li);
-            });
-         });
-      document.getElementById("componentForm").onsubmit = function(event) {
-         event.preventDefault();
+   <button type="submit">Tilføj</button>
 
-         const name = document.getElementById("komponent").value;
+</form>
 
-         fetch("/komponenter", {
-            method: "POST",
-            headers: {
-               "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ name: name })
-         });
-      };
+<script>
 
-   </script>
+   fetch("/komponenter")
+           .then(response => response.json())
+           .then(components => {
+
+              const componentList =
+                      document.getElementById("componentList");
+
+              components.forEach(component => {
+
+                 const row = document.createElement("tr");
+
+                 row.innerHTML = `
+                    <td>${component.id}</td>
+                    <td>${component.navn}</td>
+                    <td>${component.eksterntVarenr}</td>
+                    <td>${component.leverandoer.navn}</td>
+                    <td>${component.udgaaet ? "Udgået" : "Aktiv"}</td>
+                    <td></td>
+                `;
+
+                 const actionCell = row.lastElementChild;
+
+                 if (!component.udgaaet) {
+
+                    const button = document.createElement("button");
+
+                    button.textContent = "Udgået";
+
+                    button.onclick = function () {
+
+                       if (confirm(
+                               "Er du sikker på, at komponenten skal markeres som udgået?"
+                       )) {
+
+                          fetch(
+                                  "/komponenter/" +
+                                  component.id +
+                                  "/udgaaet",
+                                  {
+                                     method: "PUT"
+                                  }
+                          )
+                                  .then(response => {
+
+                                     if (!response.ok) {
+                                        throw new Error(
+                                                "Kunne ikke markere komponenten som udgået"
+                                        );
+                                     }
+
+                                     location.reload();
+
+                                  })
+                                  .catch(error => {
+
+                                     console.error(error);
+                                     alert("Der skete en fejl.");
+
+                                  });
+                       }
+                    };
+
+                    actionCell.appendChild(button);
+
+                 } else {
+
+                    actionCell.textContent = "-";
+
+                 }
+
+                 componentList.appendChild(row);
+              });
+           });
+
+
+   document.getElementById("componentForm").onsubmit =
+           function(event) {
+
+              event.preventDefault();
+
+              const id =
+                      document.getElementById("id").value;
+
+              const navn =
+                      document.getElementById("navn").value;
+
+              const varenr =
+                      document.getElementById("varenr").value;
+
+              const leverandoer =
+                      document.getElementById("leverandoer").value;
+
+
+              fetch("/komponenter", {
+
+                 method: "POST",
+
+                 headers: {
+                    "Content-Type": "application/json"
+                 },
+
+                 body: JSON.stringify({
+
+                    id: Number(id),
+
+                    navn: navn,
+
+                    eksterntVarenr: varenr,
+
+                    leverandoer: {
+                       navn: leverandoer
+                    },
+
+                    udgaaet: false
+                 })
+              })
+
+                      .then(response => {
+
+                         if (!response.ok) {
+
+                            return response.text().then(text => {
+                               throw new Error(text);
+                            });
+                         }
+
+                         return response.json();
+
+                      })
+
+                      .then(() => {
+
+                         location.reload();
+
+                      })
+
+                      .catch(error => {
+
+                         console.error(error);
+
+                         alert(
+                                 "Der skete en fejl ved oprettelsen:\n" +
+                                 error.message
+                         );
+
+                      });
+           };
+
+</script>
 
 </body>
 </html>

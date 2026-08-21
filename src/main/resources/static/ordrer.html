@@ -2,77 +2,314 @@
 <html lang="da">
 <head>
    <meta charset="utf-8">
-   <title>ElektroStorage</title>
+   <title>ElektroStorage - Bestilling</title>
+
+   <style>
+      table {
+         border-collapse: collapse;
+         width: 80%;
+      }
+
+      th, td {
+         border: 1px solid black;
+         padding: 8px;
+         text-align: left;
+      }
+
+      th {
+         background-color: #f2f2f2;
+      }
+   </style>
 </head>
 
 <body>
-   <h1>ElektroStorage - Bestilling #<span id="orderId"></span></h1>
-   <hr>
 
-   <h3>Komponenter i bestillingen</h3>
+<h1>
+   ElektroStorage - Bestilling #<span id="orderId"></span>
+</h1>
 
-   <ul id="componentList">
-   </ul>
+<hr>
 
-   <div id="addComponent">
-      <h3>Tilføj komponent</h3>
+<h3>Oplysninger om bestilling</h3>
 
-      <form id="componentForm">
-         <label for="komponent">Komponent ID:</label>
-         <input type="number" id="komponent">
+<table>
+   <tr>
+      <th>Status</th>
+      <td id="orderStatus"></td>
+   </tr>
 
-         <label for="antal">Antal:</label>
-         <input type="number" id="antal">
+   <tr>
+      <th>Leverandør</th>
+      <td id="supplier"></td>
+   </tr>
 
-         <button type="submit">Tilføj</button>
-      </form>
+   <tr>
+      <th>Tracking-kode</th>
+      <td id="trackingCode"></td>
+   </tr>
 
-   </div>
+   <tr>
+      <th>Forventet levering</th>
+      <td id="expectedDate"></td>
+   </tr>
+</table>
 
-   <script>
-      const orderId = new URLSearchParams(window.location.search).get("id");
+<h3>Komponenter i bestillingen</h3>
 
+<table>
+   <thead>
+   <tr>
+      <th>Komponent ID</th>
+      <th>Komponent</th>
+      <th>Antal</th>
+   </tr>
+   </thead>
 
-      fetch("/bestillinger/" + orderId)
-         .then(response => response.json())
-         .then(order => {
+   <tbody id="componentList">
+   </tbody>
+</table>
 
-            order.komponenter.forEach(komponent => {
-               const li = document.createElement("li");
+<div id="addComponent">
 
-               li.textContent = komponent.komponent.name;
+   <h3>Tilføj komponent</h3>
 
-               document.getElementById("componentList").appendChild(li);
-            });
+   <form id="componentForm">
 
+      <label for="komponent">
+         Komponent ID:
+      </label>
 
-            document.getElementById("orderId").textContent = order.id;
+      <input
+              type="number"
+              id="komponent"
+              min="1"
+              required
+      >
 
-            if (order.sent) {
-               document.getElementById("addComponent").style.display = "none";
-            }
-         });
+      <br><br>
 
-      document.getElementById("componentForm").onsubmit = function(event) {
-         event.preventDefault();
+      <label for="antal">
+         Antal:
+      </label>
 
-         const komponentId = document.getElementById("komponent").value;
-         const antal = document.getElementById("antal").value;
+      <input
+              type="number"
+              id="antal"
+              min="1"
+              required
+      >
 
-         fetch("/bestillinger/komponenter", {
-            method: "POST",
-            headers: {
-               "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-               bestilling: { id: orderId },
-               komponent: { id: komponentId },
-               antal: antal
-            })
-         });
-      };
+      <br><br>
 
-   </script>
+      <button type="submit">
+         Tilføj komponent
+      </button>
+
+   </form>
+
+</div>
+
+<div id="sendOrder">
+
+   <h3>Afslut bestilling</h3>
+
+   <button id="sendButton">
+      Markér som sendt
+   </button>
+
+</div>
+
+<script>
+
+   const orderId =
+           new URLSearchParams(window.location.search).get("id");
+
+   document.getElementById("orderId").textContent = orderId;
+
+   fetch("/bestillinger/" + orderId)
+           .then(response => {
+
+              if (!response.ok) {
+                 throw new Error(
+                         "Kunne ikke hente bestillingen"
+                 );
+              }
+
+              return response.json();
+
+           })
+           .then(order => {
+
+              if (order.sendtDato) {
+
+                 document.getElementById("orderStatus")
+                         .textContent = "Sendt";
+
+              } else {
+
+                 document.getElementById("orderStatus")
+                         .textContent = "Ikke sendt";
+              }
+
+              document.getElementById("supplier")
+                      .textContent =
+                      order.leverandoer
+                              ? order.leverandoer.navn
+                              : "-";
+
+              document.getElementById("trackingCode")
+                      .textContent =
+                      order.trackingKode || "-";
+
+              document.getElementById("expectedDate")
+                      .textContent =
+                      order.forventetDato || "-";
+
+              const componentList =
+                      document.getElementById("componentList");
+
+              order.komponenter.forEach(komponent => {
+
+                 const row =
+                         document.createElement("tr");
+
+                 row.innerHTML = `
+                    <td>${komponent.komponent.id}</td>
+                    <td>${komponent.komponent.navn}</td>
+                    <td>${komponent.antal}</td>
+                `;
+
+                 componentList.appendChild(row);
+
+              });
+
+              if (order.sendtDato) {
+
+                 document.getElementById("addComponent")
+                         .style.display = "none";
+
+                 document.getElementById("sendOrder")
+                         .style.display = "none";
+              }
+
+           })
+           .catch(error => {
+
+              console.error(error);
+
+              alert(
+                      "Kunne ikke hente bestillingen."
+              );
+
+           });
+
+   document.getElementById("componentForm").onsubmit =
+           function(event) {
+
+              event.preventDefault();
+
+              const komponentId =
+                      document.getElementById("komponent").value;
+
+              const antal =
+                      document.getElementById("antal").value;
+
+              fetch("/bestillinger/komponenter", {
+
+                 method: "POST",
+
+                 headers: {
+                    "Content-Type": "application/json"
+                 },
+
+                 body: JSON.stringify({
+
+                    bestillingId: Number(orderId),
+
+                    komponentId: Number(komponentId),
+
+                    antal: Number(antal)
+
+                 })
+
+              })
+                      .then(response => {
+
+                         if (!response.ok) {
+
+                            return response.text()
+                                    .then(text => {
+                                       throw new Error(text);
+                                    });
+
+                         }
+
+                         return response.json();
+
+                      })
+                      .then(() => {
+
+                         location.reload();
+
+                      })
+                      .catch(error => {
+
+                         console.error(error);
+
+                         alert(
+                                 "Kunne ikke tilføje komponent:\n" +
+                                 error.message
+                         );
+
+                      });
+
+           };
+
+   document.getElementById("sendButton").onclick =
+           function() {
+
+              if (!confirm(
+                      "Er du sikker på, at bestillingen skal markeres som sendt?"
+              )) {
+                 return;
+              }
+
+              fetch(
+                      "/bestillinger/" +
+                      orderId +
+                      "/sendt",
+                      {
+                         method: "PUT"
+                      }
+              )
+                      .then(response => {
+
+                         if (!response.ok) {
+
+                            return response.text()
+                                    .then(text => {
+                                       throw new Error(text);
+                                    });
+
+                         }
+
+                         location.reload();
+
+                      })
+                      .catch(error => {
+
+                         console.error(error);
+
+                         alert(
+                                 "Kunne ikke markere bestillingen som sendt:\n" +
+                                 error.message
+                         );
+
+                      });
+
+           };
+
+</script>
 
 </body>
 </html>
